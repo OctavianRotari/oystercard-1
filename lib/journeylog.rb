@@ -13,8 +13,7 @@ class JourneyLog
 
   def finish_jrny(exit_stn)
     current_jrny.end_jrny(exit_stn)
-    fare = outstanding_charges
-    fare
+    outstanding_charges   # returns the fare
   end
 
   def outstanding_charges

@@ -26,7 +26,7 @@ class Oystercard
   end
 
   def touch_out(exit_stn)
-    deduct( @jrnylog.finish_jrny(exit_stn) )
+    deduct( @jrnylog.finish_jrny(exit_stn) )    # finish_jrny returns the fare
   end
 
   private
