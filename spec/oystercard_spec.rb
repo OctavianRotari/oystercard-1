@@ -6,6 +6,7 @@ describe Oystercard do
   let(:top_up_error){ Oystercard::TOP_UP_ERROR }
   let(:min_fare_error){ Oystercard::MIN_FARE_ERROR }
   let(:min_fare){ 1 }
+  let(:pen_fare){ 6 }
 
   let(:stn) { double:station }
 
@@ -37,6 +38,17 @@ describe Oystercard do
     it 'checks for min bal' do
       subject.top_up(min_fare - 1)
       expect{ subject.touch_in(stn) }.to raise_error min_fare_error
+    end
+    it 'stores an incomplete journey' do
+      subject.top_up(min_fare)
+      2.times { subject.touch_in(stn) }
+      expect(subject.trips.last).to eq(jrny)
+    end
+    it 'charges for an incomplete journey' do
+      subject.top_up(min_fare)
+      subject.touch_in(stn)
+      allow(jrny).to receive(:fare) {pen_fare}
+      expect{ subject.touch_in(stn) }.to change(subject, :bal).by(-pen_fare)
     end
   end
 
