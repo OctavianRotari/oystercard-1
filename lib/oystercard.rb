@@ -1,4 +1,3 @@
-require_relative 'journey'
 require_relative 'journeylog'
 
 class Oystercard
@@ -9,10 +8,10 @@ class Oystercard
   TOP_UP_ERROR = "Top-up failed: max balance of £#{MAX_BAL}."
   MIN_FARE_ERROR = "Insufficient funds, min fare is £#{Journey::MIN_FARE}"
 
-  def initialize(jrny_klass = Journey)
-    @jrny_klass = jrny_klass
+  def initialize(jrnylog_klass = JourneyLog)
+    @jrnylog_klass = jrnylog_klass
     @bal = 0
-    @trips = Array.new
+    @jrnylog = jrnylog_klass.new
   end
 
   def top_up(val)
@@ -22,35 +21,18 @@ class Oystercard
 
   def touch_in(entry_stn)
     raise MIN_FARE_ERROR if bal < Journey::MIN_FARE
-    outstanding_charges
-    current_jrny.start_jrny(entry_stn)
+    deduct(@jrnylog.outstanding_charges)
+    @jrnylog.start_jrny(entry_stn)
   end
 
   def touch_out(exit_stn)
-    current_jrny.end_jrny(exit_stn)
-    outstanding_charges
+    deduct( @jrnylog.finish_jrny(exit_stn) )
   end
 
   private
 
-  def outstanding_charges
-    unless @current_jrny.nil?
-      deduct
-      store_jrny
-    end
-  end
-
-  def deduct
-    @bal -= @current_jrny.fare
-  end
-
-  def store_jrny
-    @trips << @current_jrny
-    @current_jrny = nil
-  end
-
-  def current_jrny
-    @current_jrny ? @current_jrny : (@current_jrny =  @jrny_klass.new)
+  def deduct(amount)
+    @bal -= amount
   end
 
 end
