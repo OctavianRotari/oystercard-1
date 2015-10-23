@@ -2,6 +2,8 @@ require_relative 'journey'
 
 class JourneyLog
 
+  attr_reader :trips
+
   def initialize(jrny_klass = Journey)
     @jrny_klass = jrny_klass
     @trips = []

@@ -20,7 +20,7 @@ class Oystercard
   end
 
   def touch_in(entry_stn)
-    raise MIN_FARE_ERROR if bal < Journey::MIN_FARE
+    raise MIN_FARE_ERROR if @bal < Journey::MIN_FARE
     deduct(@jrnylog.outstanding_charges)
     @jrnylog.start_jrny(entry_stn)
   end

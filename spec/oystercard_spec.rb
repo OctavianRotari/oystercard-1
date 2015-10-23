@@ -8,20 +8,29 @@ describe Oystercard do
   let(:min_fare){ 1 }
   let(:pen_fare){ 6 }
 
-  let(:stn) { double:station }
+  let(:stn) { double(:stn) }
 
+  let(:jrnylog){ double('jrnylog', start_jrny: nil, finish_jrny: nil) }
+  let(:jrnylog_klass){ double('jrnylog_klass', new: jrnylog) }
+
+  subject { Oystercard.new(jrnylog_klass) }
+
+=begin
   let(:jrny){ double('jrny', start_jrny: nil, end_jrny: nil, fare: min_fare) }
   let(:jrny_klass){ double('jrny_klass',new: jrny ) }
 
   subject { Oystercard.new(jrny_klass) }
+=end
 
   context '#intialize' do
     it 'sets a balance of zero' do
       expect(subject.bal).to eq 0
     end
+=begin
     it 'sets @trips to an empty array' do
       expect(subject.trips).to be_empty
     end
+=end
   end
 
   context '#top_up' do
@@ -39,15 +48,18 @@ describe Oystercard do
       subject.top_up(min_fare - 1)
       expect{ subject.touch_in(stn) }.to raise_error min_fare_error
     end
+=begin
     it 'stores an incomplete journey' do
       subject.top_up(min_fare)
       2.times { subject.touch_in(stn) }
       expect(subject.trips.last).to eq(jrny)
     end
+=end
     it 'charges for an incomplete journey' do
+      allow(jrnylog).to receive(:outstanding_charges) {0}
       subject.top_up(min_fare)
       subject.touch_in(stn)
-      allow(jrny).to receive(:fare) {pen_fare}
+      allow(jrnylog).to receive(:outstanding_charges) {pen_fare}
       expect{ subject.touch_in(stn) }.to change(subject, :bal).by(-pen_fare)
     end
   end
@@ -55,15 +67,19 @@ describe Oystercard do
   context '#touch_out' do
     it 'deducts the minimum fare' do
       subject.top_up(min_fare)
+      allow(jrnylog).to receive(:outstanding_charges) {0}
       subject.touch_in(stn)
+      allow(jrnylog).to receive(:finish_jrny) {min_fare}
       expect{ subject.touch_out(stn) }.to change(subject, :bal).by(-min_fare)
     end
+=begin
     it 'stores the completed trip on touch out' do
       subject.top_up(min_fare)
       subject.touch_in(stn)
       subject.touch_out(stn)
       expect(subject.trips.last).to eq(jrny)
     end
+=end
   end
 
 end
