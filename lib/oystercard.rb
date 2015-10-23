@@ -1,3 +1,6 @@
+require_relative 'journey'
+require_relative 'journeylog'
+
 class Oystercard
 
   attr_reader :bal, :entry_stn, :trips
