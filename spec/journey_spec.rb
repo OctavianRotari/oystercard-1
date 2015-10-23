@@ -2,36 +2,30 @@ require 'journey'
 
 describe Journey do
 
-  context '#start_jny' do
-
+  context '#start_jrny' do
     it 'stores the entry station' do
-      subject.start_jny(:stn)
+      subject.start_jrny(:stn)
       expect(subject.entry_stn).to eq (:stn)
     end
-
   end
 
-  context '#end_jny' do
-
-    it 'stoares the exit station' do
-      subject.end_jny(:stn)
+  context '#end_jrny' do
+    it 'stores the exit station' do
+      subject.end_jrny(:stn)
       expect(subject.exit_stn).to eq (:stn)
     end
-
   end
 
   context '#fare' do
-
-    it 'calculates min fare for a valid journey' do
-      subject.start_jny(:stn)
-      subject.end_jny(:stn)
+    it 'returns min fare for a valid journey' do
+      subject.start_jrny(:stn)
+      subject.end_jrny(:stn)
       expect(subject.fare).to eq(Journey::MIN_FARE)
     end
-
-    it 'calculates penalty fare if no entry_stn' do
-      subject.end_jny(:stn)
+    it 'returns penalty fare if no entry_stn' do
+      subject.end_jrny(:stn)
       expect(subject.fare).to eq(Journey::PEN_FARE)
     end
-
   end
+  
 end
